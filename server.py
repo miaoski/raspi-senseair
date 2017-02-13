@@ -6,13 +6,14 @@ DATABASE = 'airmon.sq3'
 MAC_RE = re.compile(r'([0-9a-f]{2}:){5}[0-9a-f]{2}$')
 app = Flask(__name__)
 
+indicators = {}     # Don't use multiprocessing!  Multithreading should be fine.
+
 def connect_db():
     return sqlite3.connect(DATABASE)
 
 @app.before_request
 def before_request():
     g.db = connect_db()
-    g.indicator = {}
 
 @app.teardown_request
 def teardown_request(exception):
@@ -34,7 +35,8 @@ def airmon():
         loc = 'No location'
     else:
         loc = loc[0]
-    if xs['mac'] in g.indicator:
+    print indicators
+    if xs['mac'] in indicators:
         loc = '/*IND*/' + loc
     c.execute('insert into log values (?, datetime("now"), ?, ?, ?, ?, ?)',
             (xs['mac'], ip, xs['pm25'], xs['t'], xs['h'], xs['co2']))
@@ -46,14 +48,16 @@ def airmon():
 def indicator_on(mac):
     if not MAC_RE.match(mac):
         return '', 200
-    g.indicator[mac] = True
+    indicators[mac] = True
+    return 'OK', 200
 
 @app.route("/ind/off/<mac>", methods=["GET"])
 def indicator_off(mac):
     if not MAC_RE.match(mac):
         return '', 200
-    if mac in g.indicator[mac]:
-        del g.indicator[mac]
+    if mac in indicators:
+        del indicators[mac]
+    return 'OK', 200
 
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False     # JSON in UTF-8
