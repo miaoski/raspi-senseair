@@ -18,6 +18,9 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
+MAC = open('/sys/class/net/eth0/address').readline().rstrip()
+logger.info('MAC Address = %s', MAC)
+
 led_on = False
 s8.print_id()
 s8.print_fw_ver()
@@ -32,7 +35,8 @@ try:
         data = {'pm25': pm25['pm25_cf'],
                 't': t,
                 'h': h,
-                'co2': co2}
+                'co2': co2,
+                'mac': MAC}
         logger.info(repr(data))
         loc = 'N/A'
         try:
