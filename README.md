@@ -100,7 +100,7 @@ It is necessary to enable I2C, SPI and GPIO support in Raspbian.  You should ena
 
 ```bash
 sudo apt-get install python-pip python-dev build-essential python-imaging git python-smbus i2c-tools supervisord
-sudo pip install RPi.GPIO
+sudo pip install RPi.GPIO requests
 cd ~/
 git clone https://github.com/adafruit/Adafruit_Nokia_LCD.git
 cd Adafruit_Nokia_LCD
