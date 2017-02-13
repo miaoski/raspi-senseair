@@ -50,6 +50,14 @@ Use normal 3.3V LED without resistor.  It's OK.
 - GND to GND
 - GPIO16 to VIN
 
+SensrAir S8
+-----------
+S8 uses a weird type of ModBus.  We used up onboard UART, so we have to use software serial.  It's 9600 N 8 1.
+- 5V to G+ (upper)
+- GND to G0 (lower)
+- GPIO21 to TX (lower)
+- GPIO20 to RX (upper)
+
 SOFTWARE
 ========
 It is necessary to enable I2C, SPI and GPIO support in Raspbian.  You should enable Serial, but there is something to patch.
@@ -57,11 +65,21 @@ It is necessary to enable I2C, SPI and GPIO support in Raspbian.  You should ena
 1. Comment out `T0:23:respawn:/sbin/getty -L ttyAMA0` in `/etc/inittab`.
 2. Remove `console=ttyAMA0,115200` in `/boot/cmdline.txt`.
 3. Serial console is thus disabled.  Use HDMI.
+4. Add `i2c-dev` to `/etc/modules`.
+5. Install `pigpio` from joan2937 for software serial, and run `/usr/local/bin/pigpiod` when system boots.
 
 ```bash
-sudo apt-get install python-pip python-dev build-essential python-imaging git
+sudo apt-get install python-pip python-dev build-essential python-imaging git python-smbus i2c-tools
 sudo pip install RPi.GPIO
+cd ~/
 git clone https://github.com/adafruit/Adafruit_Nokia_LCD.git
 cd Adafruit_Nokia_LCD
 sudo python setup.py install
+echo 'i2c-dev' | sudo tee -a /etc/modules
+cd ~/
+git clone https://github.com/joan2937/pigpio
+cd pigpio
+make
+sudo make install
 ```
+
