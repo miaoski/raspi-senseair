@@ -46,6 +46,9 @@ Copied from [https://learn.adafruit.com/nokia-5110-3310-lcd-python-library/usage
 
 Indicator LED
 -------------
+Use normal 3.3V LED without resistor.  It's OK.
+- GND to GND
+- GPIO16 to VIN
 
 SOFTWARE
 ========
