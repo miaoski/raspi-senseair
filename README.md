@@ -125,6 +125,7 @@ SERVER
 Raspberry Pi posts the readings every 10 seconds to a C&C server.  The server locates at `http://10.1.148.5` (temporarily).
 After POST, the server sends commands like "Indicator LED ON" or "Location is A19F Left".  Any more serious operation (like to change C&C IP) shall be done with `ssh -c`.
 
+Setup SQLite3 database with `sqlite3 airmon.sq3 < schema.sql`.
 
 DEPLOYMENT
 ==========

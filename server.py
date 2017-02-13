@@ -1,8 +1,9 @@
 from flask import g, Flask, request
 import sqlite3
+import re
 
 DATABASE = 'airmon.sq3'
-
+MAC_RE = re.compile(r'([0-9a-f]{2}:){5}[0-9a-f]{2}$')
 app = Flask(__name__)
 
 def connect_db():
@@ -11,6 +12,7 @@ def connect_db():
 @app.before_request
 def before_request():
     g.db = connect_db()
+    g.indicator = {}
 
 @app.teardown_request
 def teardown_request(exception):
@@ -32,13 +34,28 @@ def airmon():
         loc = 'No location'
     else:
         loc = loc[0]
-    c.execute('insert into log values (?, datetime("now"), ?, ?, ?, ?)',
-            (xs['mac'], xs['pm25'], xs['t'], xs['h'], xs['co2']))
+    if xs['mac'] in g.indicator:
+        loc = '/*IND*/' + loc
+    c.execute('insert into log values (?, datetime("now"), ?, ?, ?, ?, ?)',
+            (xs['mac'], ip, xs['pm25'], xs['t'], xs['h'], xs['co2']))
     conn.commit()
     c.close()
     return loc, 200
 
+@app.route("/ind/on/<mac>", methods=["GET"])
+def indicator_on(mac):
+    if not MAC_RE.match(mac):
+        return '', 200
+    g.indicator[mac] = True
+
+@app.route("/ind/off/<mac>", methods=["GET"])
+def indicator_off(mac):
+    if not MAC_RE.match(mac):
+        return '', 200
+    if mac in g.indicator[mac]:
+        del g.indicator[mac]
+
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False     # JSON in UTF-8
-    app.config['DEBUG'] = True
+    app.config['DEBUG'] = False
     app.run(host='0.0.0.0', port=8080, threaded=False)
