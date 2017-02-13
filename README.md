@@ -62,29 +62,31 @@ Raspberry Pi
 ------------
 To make it easy to assemble, please check the following pin-out.
 ```
-SHT31_VIN          3V3  1   2  5V         S8_G+
-SHT31_SDA      SDA I2C  3   4  5V         G3_VIN
-SHT31_CLK      SCL I2C  5   6  GND        G3_GND
-                 GPIO4  7   8  UART_TX
-SHT31_GND          GND  9   10 UART_RX    G3_TX
-                GPIO17 11   12 PCM_CLK
-                GPIO27 13   14 GND        5110_GND
-                GPIO22 15   16 GPIO23     5110_DC
-5110_VIN           3V3 17   18 GPIO24     5110_RST
-5110_DIN          MOSI 19   20 GND
-                  MISO 21   22 GPIO25
-5110_CLK       SPI_CLK 23   24 SPI_CE0    5110_CE
-                   GND 25   26 SPI_CE1
-                 ID_SD 27   28 ID_SC
-                 GPIO5 29   30 GND        S8_G0
-                 GPIO6 31   32 GPIO12
-                GPIO13 33   34 GND        IND_LED_GND
-                GPIO19 35   36 GPIO16     IND_LED_VIN
-SHUTDOWN_SW     GPIO26 37   38 GPIO20     S8_TX
-SHUTDOWN_SW        GND 39   40 GPIO21     S8_RX
+SHT31_VIN          3V3  1 | 2  5V         S8_G+
+SHT31_SDA      SDA I2C  3 | 4  5V         G3_VIN
+SHT31_CLK      SCL I2C  5 | 6  GND        G3_GND
+                 GPIO4  7 | 8  UART_TX
+SHT31_GND          GND  9 | 10 UART_RX    G3_TX
+                GPIO17 11 | 12 PCM_CLK
+                GPIO27 13 | 14 GND        5110_GND
+                GPIO22 15 | 16 GPIO23     5110_DC
+5110_VIN           3V3 17 | 18 GPIO24     5110_RST
+5110_DIN          MOSI 19 | 20 GND
+                  MISO 21 | 22 GPIO25
+5110_CLK       SPI_CLK 23 | 24 SPI_CE0    5110_CE
+                   GND 25 | 26 SPI_CE1
+                 ID_SD 27 | 28 ID_SC
+                 GPIO5 29 | 30 GND        S8_G0
+                 GPIO6 31 | 32 GPIO12
+                GPIO13 33 | 34 GND        IND_LED_GND
+                GPIO19 35 | 36 GPIO16     IND_LED_VIN
+SHUTDOWN_SW     GPIO26 37 | 38 GPIO20     S8_TX
+SHUTDOWN_SW        GND 39 | 40 GPIO21     S8_RX
 ```
 
 External shutdown switch are defined to GPIO26.  Ground it to gracefully shutdown.
+
+We have 10 GPIO left for further use.
 
 
 CLIENT SIDE (Raspberry Pi)
