@@ -55,8 +55,37 @@ SensrAir S8
 S8 uses a weird type of ModBus.  We used up onboard UART, so we have to use software serial.  It's 9600 N 8 1.
 - 5V to G+ (upper)
 - GND to G0 (lower)
-- GPIO21 to TX (lower)
-- GPIO20 to RX (upper)
+- GPIO20 (soft RX) to TX (lower)
+- GPIO21 (soft TX) to RX (upper)
+
+Raspberry Pi
+------------
+To make it easy to assemble, please check the following pin-out.
+```
+3V3     1     2 5V
+SDA I2C 3     4 5V
+SCL I2C 5     6 GND
+GPIO4   7     8 UART_TX
+GND     9    10 UART_RX
+GPIO17  11   12 PCM_CLK
+GPIO27  13   14 GND
+GPIO22  15   16 GPIO23
+3V3     17   18 GPIO24
+MOSI    19   20 GND
+MISO    21   22 GPIO25
+SPI_CLK 23   24 SPI_CE0
+GND     25   26 SPI_CE1
+ID_SD   27   28 ID_SC
+GPIO5   29   30 GND
+GPIO6   31   32 GPIO12
+GPIO13  33   34 GND
+GPIO19  35   36 GPIO16
+GPIO26  37   38 GPIO20
+GND     39   40 GPIO21
+```
+
+External shutdown switch are defined to GPIO26.  Ground it to gracefully shutdown.
+
 
 SOFTWARE
 ========
@@ -67,9 +96,10 @@ It is necessary to enable I2C, SPI and GPIO support in Raspbian.  You should ena
 3. Serial console is thus disabled.  Use HDMI.
 4. Add `i2c-dev` to `/etc/modules`.
 5. Install `pigpio` from joan2937 for software serial, and run `/usr/local/bin/pigpiod` when system boots.
+6. Install software, run `./install.sh`
 
 ```bash
-sudo apt-get install python-pip python-dev build-essential python-imaging git python-smbus i2c-tools
+sudo apt-get install python-pip python-dev build-essential python-imaging git python-smbus i2c-tools supervisord
 sudo pip install RPi.GPIO
 cd ~/
 git clone https://github.com/adafruit/Adafruit_Nokia_LCD.git
@@ -83,3 +113,16 @@ make
 sudo make install
 ```
 
+Indicator LED uses `RPi.GPIO`, while software serial uses `pigpio`.  We use different package to prevent possible dysfunction of one or the other.
+
+
+SERVER
+======
+Raspberry Pi posts the readings every 10 seconds to a C&C server.  The server locates at `http://10.1.148.5` (temporarily).
+After POST, the server sends commands like "Indicator LED ON" or "Location is A19F Left".  Any more serious operation (like to change C&C IP) shall be done with `ssh -c`.
+
+
+DEPLOYMENT
+==========
+- Use pre-shared SSH key.
+- Client IP and Mac shall be obtained by POST.
