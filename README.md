@@ -7,7 +7,7 @@ The project was initiated by Jonathan Chiang (ADM-TW) and deligated to Maker's C
 - CO2 in ppm
 
 We decided to use the following configuration,
-- G3 PM 2.5 sensor (sold in Taobao)
+- G3 PM 2.5 sensor (sold in Taobao, can be replaced by A4 or G5)
 - SHT31 I2C sensor (precise temperature + humidity)
 - SenseAir S8 (CO2)
 - Nokia 5110 LCD as indicator and debugger
@@ -16,16 +16,25 @@ We decided to use the following configuration,
 
 PINOUT
 ======
+We use Raspberry Pi Model B+.  Don't use Model A as the GPIO pins are not enough for extended use.
+
 G3 PM 2.5
 ---------
+G3 talks UART in 9600 N 8 1.  Connect the pins as (left RPi, right G3):
+- 5V to Pin 1 (VIN)
+- GND to Pin 2 (GND)
+- RX to Pin 5 (TX)
 
 SHT31
 -----
+SHT31 works on I2C.  Connect the pins as (left RPi, right LCD):
+- 3V3 to VIN (can be 5V, but we used all 5V in our configuration)
+- GND to GND
+- SDA1 to SDA
+- SCL to CLK
 
 Nokia 5110 LCD
 --------------
-*N.B.* It is a known issue that the display buffer for Nokia 5110 LCD can be distorted.  Wait for next refresh.  The display should be automatically recovered.
-
 Copied from [https://learn.adafruit.com/nokia-5110-3310-lcd-python-library/usage](Adafruit Nokia 5110 Library), the pins are (left RPi, right LCD):
 - 3.3V to VIN
 - GND to GND
