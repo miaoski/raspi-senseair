@@ -87,8 +87,8 @@ SHUTDOWN_SW        GND 39   40 GPIO21     S8_RX
 External shutdown switch are defined to GPIO26.  Ground it to gracefully shutdown.
 
 
-SOFTWARE
-========
+CLIENT SIDE (Raspberry Pi)
+==========================
 It is necessary to enable I2C, SPI and GPIO support in Raspbian.  You should enable Serial, but there is something to patch.
 
 1. Comment out `T0:23:respawn:/sbin/getty -L ttyAMA0` in `/etc/inittab`.
@@ -114,6 +114,10 @@ sudo make install
 ```
 
 Indicator LED uses `RPi.GPIO`, while software serial uses `pigpio`.  We use different package to prevent possible dysfunction of one or the other.
+
+Security
+--------
+Better enable unattended update and disable `PasswordAuthentication` in `/etc/ssh/sshd_config`.
 
 
 SERVER
