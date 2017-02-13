@@ -24,7 +24,6 @@ def teardown_request(exception):
 def airmon():
     xs = request.form
     ip = request.remote_addr
-    print xs
     if 'mac' not in xs:
         return 'Invalid input', 200
     conn = g.db
@@ -35,7 +34,6 @@ def airmon():
         loc = 'No location'
     else:
         loc = loc[0]
-    print indicators
     if xs['mac'] in indicators:
         loc = '/*IND*/' + loc
     c.execute('insert into log values (?, datetime("now"), ?, ?, ?, ?, ?)',

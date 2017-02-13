@@ -10,6 +10,7 @@ import nokia5110
 import requests
 SERVER = 'http://10.1.68.62:8080/airmon'
 TIMEOUT = 5
+IND_STR = '/*IND*/'
 
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.DEBUG)
@@ -31,18 +32,20 @@ try:
         (t, h) = sht31.read_sht31()
         pm25 = g3.read_g3()
         co2 = s8.read_co2()
-        indicator_led.OFF()
-        data = {'pm25': pm25['pm25_cf'],
-                't': t,
-                'h': h,
-                'co2': co2,
-                'mac': MAC}
+        if not led_on:
+            indicator_led.OFF()
+        data = {'pm25': pm25['pm25_cf'], 't': t, 'h': h, 'co2': co2, 'mac': MAC}
         logger.info(repr(data))
         loc = 'N/A'
         try:
             r = requests.post(SERVER, data=data, timeout=TIMEOUT)
             loc = r.text
             logger.debug('Get loc = %s', loc)
+            if loc.startswith(IND_STR):
+                indicator_led.ON()
+                led_on = True
+            else:
+                led_on = False
         except requests.exceptions.ConnectTimeout as e:
             logger.error('Connect timeout')
             loc = 'Net Timeout'
