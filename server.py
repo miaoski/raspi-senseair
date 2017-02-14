@@ -26,12 +26,14 @@ def airmon():
     ip = request.remote_addr
     if 'mac' not in xs:
         return 'Invalid input', 200
+    print xs
     conn = g.db
     c = conn.cursor()
     c.execute('SELECT location FROM mac WHERE mac=?', (xs['mac'], ))
     loc = c.fetchone()
     if loc is None:
-        loc = 'No location'
+        loc = 'No Location'
+        c.execute('INSERT IGNORE INTO mac VALUES (?, "No Location")', (xs['mac'], ))
     else:
         loc = loc[0]
     if xs['mac'] in indicators:
